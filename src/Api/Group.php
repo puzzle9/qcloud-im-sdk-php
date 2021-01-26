@@ -277,4 +277,19 @@ class Group
         return $r;
     }
 
+    /**
+     * 获取直播群在线人数
+     *
+     * @param string                             $groupId
+     *
+     * @return int
+     */
+    public function getOnlineNumber($GroupId)
+    {
+        $r = $this->httpClient->postJson('group_open_http_svc/get_online_member_num', [
+            'GroupId' => $GroupId,
+        ]);
+
+        return $r['OnlineMemberNum'];
+    }
 }
