@@ -276,7 +276,7 @@ class Group
         $r = $this->httpClient->postJson('group_open_http_svc/get_group_member_info', $p);
         return $r;
     }
-
+    
     /**
      * 获取直播群在线人数
      *
@@ -291,5 +291,31 @@ class Group
         ]);
 
         return $r['OnlineMemberNum'];
+    }
+    
+    /**
+     * 获取 App 中的所有群组(分页)
+     *
+     * @param int | null $limit 本次获取的群组 ID 数量的上限，不得超过 10000。如果不填，默认为最大值 10000
+     * @param int | null $next 群太多时分页拉取标志，第一次填0，以后填上一次返回的值，返回的 Next 为0代表拉完了
+     * @param  string $groupType 群组形态 Public（公开群），Private（私密群），ChatRoom（聊天室），AVChatRoom（音视频聊天室）和 BChatRoom（在线成员广播大群）
+     * @return array
+     */
+    public function getGroupList(
+        $limit = 10000,
+        $next = 0,
+        $groupType = null
+    ): array {
+        $r = $this->httpClient->postJson('group_open_http_svc/get_appid_group_list', [
+            'Limit' => $limit,
+            'Next' => $next,
+            'GroupType' => $groupType,
+        ]);
+        
+        return [
+            'groupIds' => collect($r['GroupIdList'])->pluck('GroupId'),
+            'next' => $r['Next'],
+            'totalCount' => $r['TotalCount'],
+        ];
     }
 }
